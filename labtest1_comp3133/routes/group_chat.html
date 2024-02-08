@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <script>
+        var socket = io();
+    
+        var username = localStorage.getItem('username');
+
+        socket.on('chat_message', function(data){
+            console.log(`Chat: ${data.username}: ${data.message}`);
+            const container = document.getElementById('container');
+            container.innerHTML += `<p><strong>${data.username}:</strong> ${data.message}</p>`;
+        });
+
+        function sendMessage() {
+            const message = document.getElementById('message').value.trim();
+
+            socket.emit('chat_message', { username: username, message: message });
+
+            document.getElementById('message').value = '';
+        }
+    </script>
+    
+    
+    <input type="text" id="message" name="message" placeholder="Enter your message"/>
+    <button onclick="sendMessage()">Send Message</button> 
+    <h3>Chat History</h3>
+    <div id="container" name="container">
+        
+    </div>
+</body>
+</html>

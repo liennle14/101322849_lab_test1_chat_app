@@ -76,19 +76,31 @@
         document.getElementById('login-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
-            var formData = new FormData(this);
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+    var formData = {
+        username: username,
+        password: password
+    };
+
+    var jsonData = JSON.stringify(formData);
 
             fetch('http://localhost:8081/login', {
-                method: 'POST',
-                body: formData
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: jsonData
             })
             .then(response => {
-                if (!response.ok) {
+                if (response.redirected) {
+                    window.location.href = response.url;
                     throw new Error('Network response was not ok');
                 }
-                return response.text();
             })
             .then(data => {
+                localStorage.setItem('username', data.username);
                 localStorage.setItem('token', 'yourGeneratedTokenHere');
                 alert(data);
             })

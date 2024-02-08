@@ -84,11 +84,26 @@
         document.getElementById('signup-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
-            var formData = new FormData(this);
+        var username = document.getElementById('username').value;
+        var firstname = document.getElementById('firstname').value;
+        var lastname = document.getElementById('lastname').value;
+        var password = document.getElementById('password').value;
+        
+    var formData = {
+        username: username,
+        firstname: firstname,
+        lastname: lastname,
+        password: password
+    };
+
+    var jsonData = JSON.stringify(formData);
 
             fetch('http://localhost:8081/signup', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
             })
             .then(response => {
                 if (!response.ok) {
@@ -97,8 +112,7 @@
                 return response.text();
             })
             .then(data => {
-                alert(data); // Show response message
-                // You can redirect user or do other actions based on the response
+                alert(data);
             })
             .catch(error => {
                 console.error('There was a problem with your fetch operation:', error);

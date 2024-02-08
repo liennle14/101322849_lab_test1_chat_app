@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const app = express();
+const path = require('path');
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/home.html');
@@ -16,10 +17,6 @@ app.get('/login', (req, res) => {
 
 app.post('/signup', async (req, res) => {
     const { username, firstname, lastname, password, createon } = req.body;
-
-    if (!username || !firstname || !lastname || !password) {
-        return res.status(400).send('All fields are required');
-    }
 
     try {
         const existingUser = await User.findOne({ username });
@@ -49,8 +46,7 @@ app.post('/login', async (req, res) => {
         if (user.password !== password) {
             return res.status(401).send('Incorrect password');
         }
-
-        res.status(200).send('Login successful');
+        console.log('User logged in successfully')
         res.redirect('/rooms');
     } catch (error) {
         console.error(error);
@@ -61,17 +57,13 @@ app.post('/login', async (req, res) => {
 const rooms = ['devops', 'cloud computing', 'covid19', 'sports', 'nodeJS'];
 
 app.get('/rooms', (req, res) => {
-    // Assuming rooms.html is located in a public directory
     res.sendFile(__dirname + '/rooms.html');
 });
 
 app.get('/rooms/:room', (req, res) => {
     const room = req.params.room;
-
-    // Check if the room exists in the list of available rooms
     if (rooms.includes(room)) {
-        // Logic for joining the room
-        res.send(`You have joined the ${room} room.`);
+        res.sendFile(path.join(__dirname, 'group_chat.html'));
     } else {
         res.status(404).send('Room not found.');
     }
